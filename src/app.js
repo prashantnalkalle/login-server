@@ -14,6 +14,11 @@ const { sendResetLink } = require('./mail');
 
 const app = express();
 
+// Vercel forwards the client address through its proxy. Trust one proxy hop so
+// express-rate-limit can key limits by the client IP rather than rejecting the
+// X-Forwarded-For header. Do not trust arbitrary proxy chains.
+if (process.env.VERCEL) app.set('trust proxy', 1);
+
 // Basic security middleware.
 app.disable('x-powered-by');
 app.use(helmet());
